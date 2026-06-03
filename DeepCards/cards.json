@@ -1,18 +1,32 @@
 [
     {
         "id": "1",
-        "question": "What is the capital of France?",
-        "categoryName": "Geography",
-        "categoryId": "101"
-    },
-    {
-        "id": "2",
         "question": "Who wrote 'Hamlet'?",
         "categoryName": "Literature",
         "categoryId": "102",
         "translations": {
             "en": "Who wrote 'Hamlet'?",
             "es": "¿Quién escribió 'Hamlet'?"
+        }
+    },
+    {
+        "id": "2",
+        "question": "Hello",
+        "categoryName": "Literature",
+        "categoryId": "102",
+        "translations": {
+            "en": "Hello",
+            "es": "Ola"
+        }
+    },
+    {
+        "id": "3",
+        "question": "Ину",
+        "categoryName": "Literature",
+        "categoryId": "102",
+        "translations": {
+            "en": "Bye",
+            "es": "Adios"
         }
     }
 ]

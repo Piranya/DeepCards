@@ -2,17 +2,17 @@ import Foundation
 import SwiftData
 
 struct CardDTO: Decodable {
-    let id: UUID
+    let id: String
     let question: String
     let categoryName: String
-    let categoryId: UUID
+    let categoryId: String
     let translations: [String: String]?
 }
 
 @MainActor
 final class CardLoader {
     static func seedIfNeeded(in context: ModelContext) async throws {
-        let fetchRequest = FetchDescriptor<Card>()
+        let fetchRequest = FetchDescriptor<DeckCard>()
         let existing = try context.fetch(fetchRequest)
         guard existing.isEmpty else { return }
 
@@ -23,9 +23,14 @@ final class CardLoader {
         let dtos = try JSONDecoder().decode([CardDTO].self, from: data)
 
         for dto in dtos {
-            let card = Card(id: dto.id, question: dto.question, categoryName: dto.categoryName, categoryId: dto.categoryId, translations: dto.translations)
-            context.insert(card)
+            // Build texts dictionary from translations, falling back to question for "en"
+            var texts = dto.translations ?? [:]
+            if texts["en"].map({ !$0.isEmpty }) != true {
+                texts["en"] = dto.question
+            }
+            let deckCard = DeckCard(texts: texts)
+            context.insert(deckCard)
         }
-        try await context.save()
+        try context.save()
     }
 }
