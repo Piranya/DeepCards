@@ -1,0 +1,18 @@
+[
+    {
+        "id": "1",
+        "question": "What is the capital of France?",
+        "categoryName": "Geography",
+        "categoryId": "101"
+    },
+    {
+        "id": "2",
+        "question": "Who wrote 'Hamlet'?",
+        "categoryName": "Literature",
+        "categoryId": "102",
+        "translations": {
+            "en": "Who wrote 'Hamlet'?",
+            "es": "¿Quién escribió 'Hamlet'?"
+        }
+    }
+]
