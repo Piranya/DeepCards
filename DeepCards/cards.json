@@ -1,32 +1,152 @@
 [
     {
-        "id": "1",
-        "question": "Who wrote 'Hamlet'?",
-        "categoryName": "Literature",
+        "id": "4",
+        "question": "It’s possible to love more than one person at the same time",
+        "categoryName": "Scenaries",
         "categoryId": "102",
         "translations": {
-            "en": "Who wrote 'Hamlet'?",
-            "es": "¿Quién escribió 'Hamlet'?"
+            "en": "It’s possible to love more than one person at the same time",
+            "es": "It’s possible to love more than one person at the same time"
         }
     },
     {
-        "id": "2",
-        "question": "Hello",
-        "categoryName": "Literature",
+        "id": "5",
+        "question": "I hope to be consulted before important decisions",
+        "categoryName": "Scenaries",
         "categoryId": "102",
         "translations": {
-            "en": "Hello",
-            "es": "Ola"
+            "en": "I hope to be consulted before important decisions",
+            "es": "I hope to be consulted before important decisions"
         }
     },
     {
-        "id": "3",
-        "question": "Ину",
-        "categoryName": "Literature",
+        "id": "6",
+        "question": "Our relationship is the main one and the others will always be secondary",
+        "categoryName": "Scenaries",
         "categoryId": "102",
         "translations": {
-            "en": "Bye",
-            "es": "Adios"
+            "en": "Our relationship is the main one and the others will always be secondary",
+            "es": "Our relationship is the main one and the others will always be secondary"
+        }
+    },
+    {
+        "id": "7",
+        "question": "Taking a step back in our relationship means that we failed",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "Taking a step back in our relationship means that we failed",
+            "es": "Taking a step back in our relationship means that we failed"
+        }
+    },
+    {
+        "id": "8",
+        "question": "If you feel jealousy because of something I do, does it demonstrate it?",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "If you feel jealousy because of something I do, does it demonstrate it?",
+            "es": "If you feel jealousy because of something I do, does it demonstrate it?"
+        }
+    },
+    {
+        "id": "9",
+        "question": "I feel insecure knowing that you have experiences and relationships that do not follow the traditional model",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "I feel insecure knowing that you have experiences and relationships that do not follow the traditional model",
+            "es": "I feel insecure knowing that you have experiences and relationships that do not follow the traditional model"
+        }
+    },
+    {
+        "id": "10",
+        "question": "If I left my diary open or my phone unlocked, would you take a look?",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "If I left my diary open or my phone unlocked, would you take a look?",
+            "es": "If I left my diary open or my phone unlocked, would you take a look?"
+        }
+    },
+    {
+        "id": "11",
+        "question": "I have a hard time trusting you when you are far away",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "I have a hard time trusting you when you are far away",
+            "es": "I have a hard time trusting you when you are far away"
+        }
+    },
+    {
+        "id": "12",
+        "question": "We have rules that define what we can or can’t do with other people",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "We have rules that define what we can or can’t do with other people",
+            "es": "We have rules that define what we can or can’t do with other people"
+        }
+    },
+    {
+        "id": "13",
+        "question": "Sometimes I downplay my own needs and experience for other people because I want to protect you",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "Sometimes I downplay my own needs and experience for other people because I want to protect you",
+            "es": "Sometimes I downplay my own needs and experience for other people because I want to protect you"
+        }
+    },
+    {
+        "id": "14",
+        "question": "I feel guilty for things I feel regarding sex, love or relationships",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "I feel guilty for things I feel regarding sex, love or relationships",
+            "es": "I feel guilty for things I feel regarding sex, love or relationships"
+        }
+    },
+    {
+        "id": "15",
+        "question": "If you had a problem, I would like to be the first person to be contacted",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "If you had a problem, I would like to be the first person to be contacted",
+            "es": "If you had a problem, I would like to be the first person to be contacted"
+        }
+    },
+    {
+        "id": "16",
+        "question": "I feel disturbed by the idea of thinking of other people while masturbating",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "I feel disturbed by the idea of thinking of other people while masturbating",
+            "es": "I feel disturbed by the idea of thinking of other people while masturbating"
+        }
+    },
+    {
+        "id": "17",
+        "question": "A relationship open to all possibilities is my idea of a successful relationship",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "A relationship open to all possibilities is my idea of a successful relationship",
+            "es": "A relationship open to all possibilities is my idea of a successful relationship"
+        }
+    },
+    {
+        "id": "18",
+        "question": "I do not like a relationship in which I have to share my partner with someone else and that relationship…",
+        "categoryName": "Scenaries",
+        "categoryId": "102",
+        "translations": {
+            "en": "I do not like a relationship in which I have to share my partner with someone else and that relationship…",
+            "es": "I do not like a relationship in which I have to share my partner with someone else and that relationship…"
         }
     }
 ]

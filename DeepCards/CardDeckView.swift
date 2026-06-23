@@ -5,11 +5,13 @@ import SwiftData
 final class DeckCard {
   @Attribute(.unique) var id: UUID
   var texts: [String: String] // languageCode: text
+  var categoryName: String?
   var decision: Decision?
 
-  init(id: UUID = UUID(), texts: [String: String], decision: Decision? = nil) {
+  init(id: UUID = UUID(), texts: [String: String], categoryName: String? = nil, decision: Decision? = nil) {
     self.id = id
     self.texts = texts
+    self.categoryName = categoryName
     self.decision = decision
   }
 
@@ -26,30 +28,17 @@ struct CardsView: View {
   @State private var selectedFilter: DeckCard.Decision? = nil
   @State private var orderedCards: [DeckCard] = []
 
+  private let contentWidth: CGFloat = 320
+  private let cardCornerRadius: CGFloat = 24
+  private let controlSpacing: CGFloat = 8
+
+  private var decisionButtonWidth: CGFloat {
+    (contentWidth - controlSpacing * 2) / 3
+  }
+
   var body: some View {
     VStack(spacing: 20) {
-      HStack {
-        Menu {
-          Button(role: .destructive, action: resetDecisions) {
-            Label("Reset", systemImage: "arrow.counterclockwise")
-          }
-        } label: {
-          Image(systemName: "line.3.horizontal")
-            .imageScale(.large)
-            .padding(8)
-        }
-        Spacer()
-      }
-      .padding(.bottom, 2)
-
-      // Filter bar
-      HStack(spacing: 12) {
-        filterButton(for: nil, title: "Unsorted", color: .gray, count: unsortedCount)
-        filterButton(for: .yes, title: DeckCard.Decision.yes.rawValue, color: .green, count: yesCount)
-        filterButton(for: .dialogue, title: DeckCard.Decision.dialogue.rawValue, color: .orange, count: dialogueCount)
-        filterButton(for: .no, title: DeckCard.Decision.no.rawValue, color: .red, count: noCount)
-      }
-      .padding(.vertical, 4)
+      filterNavigationPanel
 
       if allCardsCategorized && filteredCards.isEmpty {
         VStack(spacing: 16) {
@@ -60,31 +49,26 @@ struct CardsView: View {
         }
         .padding()
       } else if !filteredCards.isEmpty {
-        Text(bestText(for: filteredCards[currentIndex]))
-          .font(.title)
-          .padding()
+        activeCard(for: filteredCards[currentIndex])
 
         // Decision buttons
-        HStack(spacing: 16) {
-          decisionButton(title: DeckCard.Decision.yes.rawValue, decision: .yes, color: .green)
-          decisionButton(title: DeckCard.Decision.dialogue.rawValue, decision: .dialogue, color: .orange)
+        HStack(spacing: controlSpacing) {
           decisionButton(title: DeckCard.Decision.no.rawValue, decision: .no, color: .red)
+          decisionButton(title: DeckCard.Decision.dialogue.rawValue, decision: .dialogue, color: .orange)
+          decisionButton(title: DeckCard.Decision.yes.rawValue, decision: .yes, color: .green)
         }
+        .frame(width: contentWidth)
 
         HStack {
-          Button("Previous") {
-            if currentIndex > 0 { currentIndex -= 1 }
-          }
-          .disabled(currentIndex == 0)
+          cardNavigationButton(systemName: "chevron.left", accessibilityLabel: "Previous card", action: showPreviousCard)
+            .disabled(currentIndex == 0)
 
           Spacer()
 
-          Button("Next") {
-            if currentIndex < filteredCards.count - 1 { currentIndex += 1 }
-          }
-          .disabled(currentIndex == filteredCards.count - 1)
+          cardNavigationButton(systemName: "chevron.right", accessibilityLabel: "Next card", action: showNextCard)
+            .disabled(currentIndex == filteredCards.count - 1)
         }
-        .padding(.horizontal, 40)
+        .frame(width: contentWidth)
       } else {
         Text("No cards available")
           .font(.title2)
@@ -97,10 +81,113 @@ struct CardsView: View {
         orderedCards = cards.shuffled()
       }
     }
-    // Removed the toolbar Menu showing filter buttons
+    .toolbar {
+      ToolbarItem(placement: .automatic) {
+        Menu {
+          Button(role: .destructive, action: resetDecisions) {
+            Label("Reset", systemImage: "arrow.counterclockwise")
+          }
+        } label: {
+          Image(systemName: "line.3.horizontal")
+            .imageScale(.large)
+        }
+      }
+    }
   }
 
   @Environment(\.modelContext) private var context
+
+  private func activeCard(for card: DeckCard) -> some View {
+    VStack(spacing: 18) {
+      Text(categoryName(for: card))
+        .font(.caption.weight(.bold))
+        .textCase(.uppercase)
+        .foregroundStyle(.white.opacity(0.75))
+        .lineLimit(1)
+
+      Spacer(minLength: 0)
+
+      Text(bestText(for: card))
+        .font(.title2)
+        .fontWeight(.semibold)
+        .multilineTextAlignment(.center)
+        .foregroundStyle(.white)
+        .lineLimit(nil)
+        .minimumScaleFactor(0.7)
+
+      Spacer(minLength: 0)
+    }
+    .padding(28)
+    .frame(width: contentWidth, height: 260)
+    .glassEffect(
+      .regular.tint(Color(red: 134 / 255, green: 127 / 255, blue: 171 / 255)),
+      in: .rect(cornerRadius: cardCornerRadius)
+    )
+    .shadow(color: Color.black.opacity(0.12), radius: 18, x: 0, y: 10)
+    .gesture(cardSwipeGesture)
+  }
+
+  private func cardNavigationButton(systemName: String, accessibilityLabel: String, action: @escaping () -> Void) -> some View {
+    Button(action: action) {
+      Image(systemName: systemName)
+        .font(.title3.weight(.semibold))
+        .frame(width: 48, height: 48)
+        .contentShape(Circle())
+        .glassEffect(.regular.interactive(), in: .circle)
+    }
+    .buttonStyle(.plain)
+    .accessibilityLabel(accessibilityLabel)
+  }
+
+  private var cardSwipeGesture: some Gesture {
+    DragGesture(minimumDistance: 30)
+      .onEnded { value in
+        handleCardSwipe(value.translation)
+      }
+  }
+
+  private func handleCardSwipe(_ translation: CGSize) {
+    let horizontalDistance = translation.width
+    let verticalDistance = translation.height
+
+    guard abs(horizontalDistance) > 60,
+          abs(horizontalDistance) > abs(verticalDistance) else {
+      return
+    }
+
+    if horizontalDistance < 0 {
+      showPreviousCard()
+    } else {
+      showNextCard()
+    }
+  }
+
+  private func showPreviousCard() {
+    if currentIndex > 0 {
+      currentIndex -= 1
+    }
+  }
+
+  private func showNextCard() {
+    if currentIndex < filteredCards.count - 1 {
+      currentIndex += 1
+    }
+  }
+
+  private var filterNavigationPanel: some View {
+    GlassEffectContainer(spacing: controlSpacing) {
+      HStack(spacing: 6) {
+        filterButton(for: nil, title: "?", color: .gray, count: unsortedCount)
+        filterButton(for: .yes, title: DeckCard.Decision.yes.rawValue, color: .green, count: yesCount)
+        filterButton(for: .dialogue, title: DeckCard.Decision.dialogue.rawValue, color: .orange, count: dialogueCount)
+        filterButton(for: .no, title: DeckCard.Decision.no.rawValue, color: .red, count: noCount)
+      }
+      .padding(8)
+      .glassEffect(.regular, in: .rect(cornerRadius: 20))
+      .shadow(color: Color.black.opacity(0.08), radius: 12, x: 0, y: 6)
+    }
+    .padding(.vertical, 4)
+  }
 
   private var filteredCards: [DeckCard] {
     let source = orderedCards.isEmpty ? cards : orderedCards
@@ -117,43 +204,35 @@ struct CardsView: View {
 
   private func filterButton(for decision: DeckCard.Decision?, title: String, color: Color, count: Int) -> some View {
     let isSelected = selectedFilter == decision
+    let label = "\(title) (\(count))"
+
     return Button {
       applyFilter(decision)
     } label: {
-      if isSelected {
-        Label("\(title) (\(count))", systemImage: "checkmark")
-          .frame(minWidth: 80)
-          .padding(.vertical, 8)
-          .padding(.horizontal, 12)
-          .background(.thinMaterial)
-          .cornerRadius(8)
-          .overlay(
-            RoundedRectangle(cornerRadius: 8)
-              .stroke(Color.accentColor, lineWidth: 2)
-          )
-          .foregroundColor(color)
-          .minimumScaleFactor(0.75)
-      } else {
-        Text("\(title) (\(count))")
-          .frame(minWidth: 80)
-          .padding(.vertical, 8)
-          .padding(.horizontal, 12)
-          .background(Color.clear)
-          .cornerRadius(8)
-          .overlay(
-            RoundedRectangle(cornerRadius: 8)
-              .stroke(color.opacity(0.6), lineWidth: 1)
-          )
-          .foregroundColor(color)
+      HStack(spacing: 4) {
+        
+
+        Text(label)
+          .font(.caption.weight(.semibold))
+          .lineLimit(1)
           .minimumScaleFactor(0.75)
       }
+      .foregroundStyle(color)
+      .padding(.horizontal, 12)
+      .frame(minWidth: 44, minHeight: 36)
+      .contentShape(RoundedRectangle(cornerRadius: 12))
+      .glassEffect(
+        isSelected ? .regular.tint(color.opacity(0.18)).interactive() : .regular.interactive(),
+        in: .rect(cornerRadius: 12)
+      )
     }
-    .buttonStyle(.bordered)
+    .buttonStyle(.plain)
   }
 
   private func decisionButton(title: String, decision: DeckCard.Decision, color: Color) -> some View {
     let isSelected = !filteredCards.isEmpty && filteredCards[currentIndex].decision == decision
-    return Button(title) {
+
+    return Button {
       guard !filteredCards.isEmpty else { return }
       let card = filteredCards[currentIndex]
       card.decision = decision
@@ -176,14 +255,37 @@ struct CardsView: View {
       } else if currentIndex >= newFiltered.count {
         currentIndex = newFiltered.count - 1
       }
+    } label: {
+      VStack(spacing: 8) {
+        Text(title)
+          .font(.headline.weight(.semibold))
+          .lineLimit(1)
+          .minimumScaleFactor(0.8)
+
+        Image(systemName: decisionIconName(for: decision))
+          .font(.title2.weight(.bold))
+      }
+      .foregroundStyle(color)
+      .frame(width: decisionButtonWidth, height: 84)
+      .contentShape(RoundedRectangle(cornerRadius: cardCornerRadius))
+      .glassEffect(
+        isSelected ? .regular.tint(color.opacity(0.22)).interactive() : .regular.interactive(),
+        in: .rect(cornerRadius: cardCornerRadius)
+      )
     }
-    .buttonStyle(.borderedProminent)
-    .tint(color)
-    .opacity(isSelected ? 1.0 : 0.7)
-    .overlay(
-      RoundedRectangle(cornerRadius: 8)
-        .stroke(isSelected ? Color.accentColor : .clear, lineWidth: isSelected ? 2 : 0)
-    )
+    .buttonStyle(.plain)
+    .opacity(isSelected ? 1.0 : 0.9)
+  }
+
+  private func decisionIconName(for decision: DeckCard.Decision) -> String {
+    switch decision {
+    case .yes:
+      return "checkmark"
+    case .dialogue:
+      return "message"
+    case .no:
+      return "xmark"
+    }
   }
 
   private func applyFilter(_ decision: DeckCard.Decision?) {
@@ -199,6 +301,15 @@ struct CardsView: View {
     orderedCards = cards.shuffled()
     selectedFilter = nil
     currentIndex = 0
+  }
+
+  private func categoryName(for card: DeckCard) -> String {
+    guard let categoryName = card.categoryName?.trimmingCharacters(in: .whitespacesAndNewlines),
+          !categoryName.isEmpty else {
+      return "Uncategorized"
+    }
+
+    return categoryName
   }
 
   private func bestText(for card: DeckCard) -> String {
@@ -235,9 +346,9 @@ private struct PreviewCardsView: View {
       .task {
         // Insert sample data once for previews
         if ((try? context.fetch(FetchDescriptor<DeckCard>()).isEmpty == true) != nil) {
-          let card1 = DeckCard(texts: ["en": "Hello", "es": "Hola", "fr": "Bonjour"], decision: .yes)
-          let card2 = DeckCard(texts: ["en": "Goodbye", "de": "Auf Wiedersehen"], decision: .dialogue)
-          let card3 = DeckCard(texts: ["ja": "こんにちは", "en": "Hi"], decision: .no)
+          let card1 = DeckCard(texts: ["en": "Hello", "es": "Hola", "fr": "Bonjour"], categoryName: "Greetings", decision: .yes)
+          let card2 = DeckCard(texts: ["en": "Goodbye", "de": "Auf Wiedersehen"], categoryName: "Farewells", decision: .dialogue)
+          let card3 = DeckCard(texts: ["ja": "こんにちは", "en": "Hi"], categoryName: "Introductions", decision: .no)
           context.insert(card1)
           context.insert(card2)
           context.insert(card3)

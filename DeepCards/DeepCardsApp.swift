@@ -24,8 +24,10 @@ struct DeepCardsApp: App {
                 let context = ModelContext(container)
                 print("[Seeding] Starting initial data seed…")
                 do {
+                    try CardLoader.removeAllCards(in: context)
+
                     try await CardLoader.seedIfNeeded(in: context)
-                    print("[Seeding] Completed successfully.")
+                    print("[Seeding] Completed successfully!")
                     let existing = try context.fetch(FetchDescriptor<DeckCard>())
                       guard existing.isEmpty else { return }
                     print("[Seeding] Existing DeckCard count: \(existing.count)")
@@ -40,7 +42,21 @@ struct DeepCardsApp: App {
 
     var body: some Scene {
         WindowGroup {
-            CardsView()
+            NavigationStack {
+                CardsView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 165 / 255, green: 166 / 255, blue: 212 / 255),
+                                Color(red: 77 / 255, green: 170 / 255, blue: 94 / 255)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                        .ignoresSafeArea()
+                    )
+            }
         }
         .modelContainer(sharedModelContainer)
     }

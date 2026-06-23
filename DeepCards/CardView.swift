@@ -23,7 +23,7 @@ public struct CardView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(isSelected ? Color.accentColor.opacity(0.12) : Color(.systemBackground))
+//                    .fill(isSelected ? Color.accentColor.opacity(0.12) : Color(.systemBackground))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
