@@ -1,24 +1,28 @@
 import SwiftUI
 
-// Shim to allow `.glassEffect(.thick...)` style calls to compile and render
+// Enhanced shim to provide a vibrant glass effect compatible with previous API style
 public struct GlassStyle {
     public var material: Material
+    public var baseTintOpacity: Double
     public var tint: Color?
     public var isInteractive: Bool
-    
-    public init(material: Material, tint: Color? = nil, isInteractive: Bool = false) {
+
+    public init(material: Material, baseTintOpacity: Double = 0.18, tint: Color? = nil, isInteractive: Bool = false) {
         self.material = material
+        self.baseTintOpacity = baseTintOpacity
         self.tint = tint
         self.isInteractive = isInteractive
     }
 }
 
 public enum Glass {
-    case style(GlassStyle)
-    
-    // Preset similar to the previous `.thick`
+    // Preset similar to the previous `.thick` but more vibrant
     public static var thick: GlassStyle {
-        GlassStyle(material: .regularMaterial, tint: nil, isInteractive: false)
+        #if os(iOS)
+        return GlassStyle(material: .ultraThinMaterial, baseTintOpacity: 0.22)
+        #else
+        return GlassStyle(material: .thinMaterial, baseTintOpacity: 0.22)
+        #endif
     }
 }
 
@@ -35,8 +39,27 @@ public extension GlassStyle {
     }
 }
 
-public extension ShapeStyle where Self == AnyShapeStyle {
-    static func rect(cornerRadius: CGFloat) -> AnyShapeStyle { AnyShapeStyle(.background) }
+private struct GlassBackground<S: Shape>: View {
+    let shape: S
+    let style: GlassStyle
+
+    var body: some View {
+        ZStack {
+            // Base tint for lift on dark backgrounds
+            shape.fill((style.tint ?? Color.white).opacity(style.baseTintOpacity))
+            // Material layer for translucency
+            shape.fill(style.material)
+            // Stronger color tint overlay if provided
+            if let tint = style.tint {
+                shape.fill(tint)
+                    .opacity(0.28)
+                    .blendMode(.plusLighter)
+            }
+            // Subtle highlight and border for depth
+            shape.stroke(Color.white.opacity(0.18), lineWidth: 1)
+                .blendMode(.overlay)
+        }
+    }
 }
 
 public extension View {
@@ -44,10 +67,7 @@ public extension View {
     func glassEffect(_ style: GlassStyle, in shape: some InsettableShape) -> some View {
         self
             .background(
-                ZStack {
-                    shape.fill(style.tint ?? Color.white.opacity(0.10))
-                    shape.fill(style.material)
-                }
+                GlassBackground(shape: shape, style: style)
             )
             .clipShape(shape)
     }
@@ -56,23 +76,16 @@ public extension View {
     func glassEffect(_ style: GlassStyle, in shape: some Shape) -> some View {
         self
             .background(
-                ZStack {
-                    shape.fill(style.tint ?? Color.white.opacity(0.10))
-                    shape.fill(style.material)
-                }
+                GlassBackground(shape: shape, style: style)
             )
             .clipShape(shape)
     }
 
-    // Convenience: circle overload
     @ViewBuilder
     func glassEffect(_ style: GlassStyle, in shape: Circle) -> some View {
         self
             .background(
-                ZStack {
-                    shape.fill(style.tint ?? Color.white.opacity(0.10))
-                    shape.fill(style.material)
-                }
+                GlassBackground(shape: shape, style: style)
             )
             .clipShape(shape)
     }

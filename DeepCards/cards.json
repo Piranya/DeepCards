@@ -148,5 +148,345 @@
             "en": "I do not like a relationship in which I have to share my partner with someone else and that relationship…",
             "es": "I do not like a relationship in which I have to share my partner with someone else and that relationship…"
         }
-    }
-]
+    },
+      {
+        "id": "1",
+        "question": "Participate in activities that involve physical contact with other people (massage, dance, etc.)",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Participate in activities that involve physical contact with other people (massage, dance, etc.)",
+          "es": "Participar en actividades que impliquen contacto físico con otras personas (masajes, baile, etc.)"
+        }
+      },
+      {
+        "id": "2",
+        "question": "Travel with other (previous and/or current) romantic or sexual partners",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Travel with other (previous and/or current) romantic or sexual partners",
+          "es": "Viajar con otras parejas románticas o sexuales (anteriores y/o actuales)"
+        }
+      },
+      {
+        "id": "3",
+        "question": "When we spend time alone, we always share everything we did",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "When we spend time alone, we always share everything we did",
+          "es": "Cuando pasamos tiempo separados, siempre compartimos todo lo que hicimos"
+        }
+      },
+      {
+        "id": "4",
+        "question": "Cultivate the practice of doing activities independently (from each other)",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Cultivate the practice of doing activities independently (from each other)",
+          "es": "Cultivar el hábito de realizar actividades de forma independiente (el uno del otro)"
+        }
+      },
+      {
+        "id": "5",
+        "question": "Travel alone",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Travel alone",
+          "es": "Viajar solo"
+        }
+      },
+      {
+        "id": "6",
+        "question": "Assume that the other will be present at the social events that I attend",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Assume that the other will be present at the social events that I attend",
+          "es": "Asumir que la otra persona estará presente en los eventos sociales a los que asisto"
+        }
+      },
+      {
+        "id": "7",
+        "question": "Be introduced to the other's (previous and/or current) romantic or sexual partners",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Be introduced to the other's (previous and/or current) romantic or sexual partners",
+          "es": "Conocer a las parejas románticas o sexuales (anteriores y/o actuales) de la otra persona"
+        }
+      },
+      {
+        "id": "8",
+        "question": "Have hobbies together (sports, arts, etc.)",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Have hobbies together (sports, arts, etc.)",
+          "es": "Tener pasatiempos en común (deportes, arte, etc.)"
+        }
+      },
+      {
+        "id": "9",
+        "question": "Have rituals together",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Have rituals together",
+          "es": "Tener rituales en común"
+        }
+      },
+      {
+        "id": "10",
+        "question": "Be friends and spend time with ex-partners",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Be friends and spend time with ex-partners",
+          "es": "Ser amigos y pasar tiempo con exparejas"
+        }
+      },
+      {
+        "id": "11",
+        "question": "Share the same religious or spiritual beliefs and activities",
+        "categoryName": "Free time",
+        "categoryId": "103",
+        "translations": {
+          "en": "Share the same religious or spiritual beliefs and activities",
+          "es": "Compartir las mismas creencias y actividades religiosas o espirituales"
+        }
+      },
+      {
+        "id": "20",
+        "question": "Live together part-time",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Live together part-time",
+          "es": "Vivir juntos a tiempo parcial"
+        }
+      },
+      {
+        "id": "21",
+        "question": "Have my own space (room, house or other)",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Have my own space (room, house or other)",
+          "es": "Tener mi propio espacio (habitación, casa u otro)"
+        }
+      },
+      {
+        "id": "22",
+        "question": "Have a system for the division of household chores",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Have a system for the division of household chores",
+          "es": "Tener un sistema para dividir las tareas del hogar"
+        }
+      },
+      {
+        "id": "23",
+        "question": "Sleep in separate beds",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Sleep in separate beds",
+          "es": "Dormir en camas separadas"
+        }
+      },
+      {
+        "id": "24",
+        "question": "Always eat together at the table (when we share the same space)",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Always eat together at the table (when we share the same space)",
+          "es": "Comer siempre juntos en la mesa (cuando compartimos el mismo espacio)"
+        }
+      },
+      {
+        "id": "25",
+        "question": "Would you like to be informed if I spend the night in a place that is not usual?",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Would you like to be informed if I spend the night in a place that is not usual?",
+          "es": "¿Te gustaría que te informara si paso la noche en un lugar que no es habitual?"
+        }
+      },
+      {
+        "id": "26",
+        "question": "Make plans for our future – 15 years ahead",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Make plans for our future – 15 years ahead",
+          "es": "Hacer planes para nuestro futuro: dentro de 15 años"
+        }
+      },
+      {
+        "id": "27",
+        "question": "Make plans for our future – 1 year ahead",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Make plans for our future – 1 year ahead",
+          "es": "Hacer planes para nuestro futuro: dentro de 1 año"
+        }
+      },
+      {
+        "id": "28",
+        "question": "Share our home with other people",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Share our home with other people",
+          "es": "Compartir nuestro hogar con otras personas"
+        }
+      },
+      {
+        "id": "29",
+        "question": "Be willing to make big life changes to be with the other person (change country, job, etc.)",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Be willing to make big life changes to be with the other person (change country, job, etc.)",
+          "es": "Estar dispuesto a hacer grandes cambios de vida para estar con la otra persona (cambiar de país, trabajo, etc.)"
+        }
+      },
+      {
+        "id": "30",
+        "question": "Live together full-time",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Live together full-time",
+          "es": "Vivir juntos a tiempo completo"
+        }
+      },
+      {
+        "id": "31",
+        "question": "Have a well structured routine",
+        "categoryName": "Living together",
+        "categoryId": "104",
+        "translations": {
+          "en": "Have a well structured routine",
+          "es": "Tener una rutina bien estructurada"
+        }
+      },
+      {
+        "id": "32",
+        "question": "Run a business together",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Run a business together",
+          "es": "Dirigir un negocio juntos"
+        }
+      },
+      {
+        "id": "33",
+        "question": "Make financial investments together",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Make financial investments together",
+          "es": "Realizar inversiones financieras juntos"
+        }
+      },
+      {
+        "id": "34",
+        "question": "Share the same financial goals",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Share the same financial goals",
+          "es": "Compartir los mismos objetivos financieros"
+        }
+      },
+      {
+        "id": "35",
+        "question": "Have a joint bank account",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Have a joint bank account",
+          "es": "Tener una cuenta bancaria conjunta"
+        }
+      },
+      {
+        "id": "36",
+        "question": "Exchange high-value gifts",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Exchange high-value gifts",
+          "es": "Intercambiar regalos de alto valor"
+        }
+      },
+      {
+        "id": "37",
+        "question": "Lend money to each other",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Lend money to each other",
+          "es": "Prestarse dinero mutuamente"
+        }
+      },
+      {
+        "id": "38",
+        "question": "Talk openly about our financial situation",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Talk openly about our financial situation",
+          "es": "Hablar abiertamente sobre nuestra situación financiera"
+        }
+      },
+      {
+        "id": "39",
+        "question": "Share the expense when we go out for a meal",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Share the expense when we go out for a meal",
+          "es": "Compartir el gasto cuando salimos a comer"
+        }
+      },
+      {
+        "id": "40",
+        "question": "Buy a property together",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Buy a property together",
+          "es": "Comprar una propiedad juntos"
+        }
+      },
+      {
+        "id": "41",
+        "question": "Influence the other person’s financial decisions",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Influence the other person’s financial decisions",
+          "es": "Influir en las decisiones financieras de la otra persona"
+        }
+      },
+      {
+        "id": "42",
+        "question": "Have a joint savings account",
+        "categoryName": "Finances",
+        "categoryId": "105",
+        "translations": {
+          "en": "Have a joint savings account",
+          "es": "Tener una cuenta de ahorros conjunta"
+        }
+      }
+    ]
