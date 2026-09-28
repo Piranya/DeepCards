@@ -17,8 +17,20 @@ final class DeckCard {
 
   enum Decision: String, Codable, CaseIterable {
     case yes = "Yes"
-    case dialogue = "Dialogue"
+    case dialogue = "Discuss"
     case no = "No"
+
+    init(from decoder: Decoder) throws {
+      let container = try decoder.singleValueContainer()
+      let raw = try container.decode(String.self)
+      if raw == "Dialogue" || raw == "Discuss" {
+        self = .dialogue
+      } else if let val = Decision(rawValue: raw) {
+        self = val
+      } else {
+        self = .dialogue
+      }
+    }
   }
 }
 
@@ -28,7 +40,6 @@ struct CardsView: View {
   @State private var selectedFilter: DeckCard.Decision? = nil
   @State private var orderedCards: [DeckCard] = []
   @State private var selectedTab: FilterTag = .unsorted
-  @State private var chipFrames: [ChipFrame] = []
   @State private var showUnsortedOnly: Bool = true
   
   @State private var selectedCategories: Set<String> = []
@@ -49,7 +60,7 @@ struct CardsView: View {
       base = source
     }
     // Category filter: if not all selected, filter to selectedCategories
-    if !selectedCategories.isEmpty && selectedCategories.count != allCategories.count {
+    if selectedCategories.count != allCategories.count {
       return base.filter { card in
         let name = card.categoryName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         return selectedCategories.contains(name)
@@ -67,89 +78,88 @@ struct CardsView: View {
   }
 
   var body: some View {
-    ZStack(alignment: .bottom) {
-      // Main content
-      VStack(spacing: 20) {
-          filterBar
-            .padding(.horizontal, 16)
-            .padding(.bottom, 12)
-            .shadow(color: Color.black.opacity(0.15), radius: 18, x: 0, y: 10)
-            .frame(width: contentWidth)
-            .padding()
-        if allCardsCategorized && filteredCards.isEmpty {
-          // Automatically reshuffle and re-enter when all filtered cards are consumed
-          Color.clear
-            .onAppear {
-              reshuffleAndReenterDeck()
-            }
-        } else if !filteredCards.isEmpty {
-            
-            
-          GenericCardDeck(cards: $deckCardsMirror, visibleCards: 3, entrancePhase: deckEntrancePhase, navOffset: navTransitionOffset, onDeckEmpty: { reshuffleAndReenterDeck() }) { item in
-            VStack(spacing: 18) {
-              Text(categoryName(for: item))
-                .font(.caption.weight(.bold))
-                .textCase(.uppercase)
-                .foregroundStyle(.white.opacity(0.75))
-                .lineLimit(1)
+    ZStack {
+      // Main content vertical flow for portrait view
+      VStack(spacing: 16) {
+        Spacer(minLength: 0)
 
-              Spacer(minLength: 0)
-
-              Text(bestText(for: item))
-                .font(.title2)
-                .fontWeight(.semibold)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.white)
-                .lineLimit(nil)
-                .minimumScaleFactor(0.7)
-
-              Spacer(minLength: 0)
-            }
-            .padding(28)
-            .frame(width: contentWidth, height: 260)
-            .background(
-              RoundedRectangle(cornerRadius: cardCornerRadius)
-                .fill(colorForCategory(item.categoryName))
-            )
-            .shadow(color: Color.black.opacity(0.12), radius: 18, x: 0, y: 10)
-          }
-          .onAppear {
-            deckCardsMirror = Array(filteredCards.prefix(10))
-            deckEntrancePhase = 0
-            withAnimation(.spring(response: 1.6, dampingFraction: 0.78)) {
-              deckEntrancePhase = 1
-            }
-          }
-
-          // Decision buttons
-          HStack(spacing: controlSpacing) {
-            decisionButton(title: DeckCard.Decision.no.rawValue, decision: .no, color: .red)
-            decisionButton(title: DeckCard.Decision.dialogue.rawValue, decision: .dialogue, color: .orange)
-            decisionButton(title: DeckCard.Decision.yes.rawValue, decision: .yes, color: .green)
-          }
+        filterBar
           .frame(width: contentWidth)
+          .transaction { $0.animation = nil }
 
-//          HStack {
-//            cardNavigationButton(systemName: "chevron.left", accessibilityLabel: "Previous card", action: showPreviousCard)
-//              .disabled(currentIndex == 0)
-//
-//            Spacer()
-//
-//            cardNavigationButton(systemName: "chevron.right", accessibilityLabel: "Next card", action: showNextCard)
-//              .disabled(currentIndex == filteredCards.count - 1)
-//          }
-//          .frame(width: contentWidth)z
-        } else {
-          Text("No cards available")
-            .font(.title2)
-            .foregroundColor(.secondary)
+        Spacer(minLength: 0)
+
+        ZStack {
+          if allCardsCategorized && filteredCards.isEmpty {
+            // Automatically reshuffle and re-enter when all filtered cards are consumed
+            Color.clear
+              .onAppear {
+                reshuffleAndReenterDeck()
+              }
+          } else if !filteredCards.isEmpty {
+            GenericCardDeck(
+              cards: $deckCardsMirror,
+              visibleCards: 3,
+              entrancePhase: deckEntrancePhase,
+              navOffset: navTransitionOffset,
+              onDeckEmpty: { reshuffleAndReenterDeck() }
+            ) { item in
+              VStack(spacing: 18) {
+                Text(categoryName(for: item))
+                  .font(.caption.weight(.bold))
+                  .textCase(.uppercase)
+                  .foregroundStyle(.white.opacity(0.75))
+                  .lineLimit(1)
+
+                Spacer(minLength: 0)
+
+                Text(bestText(for: item))
+                  .font(.title2)
+                  .fontWeight(.semibold)
+                  .multilineTextAlignment(.center)
+                  .foregroundStyle(.white)
+                  .lineLimit(nil)
+                  .minimumScaleFactor(0.7)
+
+                Spacer(minLength: 0)
+              }
+              .padding(28)
+              .frame(width: contentWidth, height: 260)
+              .background(
+                RoundedRectangle(cornerRadius: cardCornerRadius)
+                  .fill(colorForCategory(item.categoryName))
+              )
+              .shadow(color: Color.black.opacity(0.12), radius: 18, x: 0, y: 10)
+            }
+            .onAppear {
+              deckCardsMirror = Array(filteredCards.prefix(10))
+              deckEntrancePhase = 0
+              withAnimation(.spring(response: 1.6, dampingFraction: 0.78)) {
+                deckEntrancePhase = 1
+              }
+            }
+          } else {
+            Text("No cards available")
+              .font(.title2)
+              .foregroundColor(.secondary)
+          }
         }
+        .frame(width: contentWidth, height: 260)
+
+        Spacer(minLength: 0)
+
+        // Decision buttons
+        HStack(spacing: controlSpacing) {
+          decisionButton(title: DeckCard.Decision.no.rawValue, decision: .no, color: .red)
+          decisionButton(title: DeckCard.Decision.dialogue.rawValue, decision: .dialogue, color: .orange)
+          decisionButton(title: DeckCard.Decision.yes.rawValue, decision: .yes, color: .green)
+        }
+        .frame(width: contentWidth)
+        .transaction { $0.animation = nil }
 
         Spacer(minLength: 0)
       }
- 
-
-    
+      .padding(.vertical, 8)
     }
     .ignoresSafeArea(.keyboard)
     .onAppear {
@@ -166,9 +176,7 @@ struct CardsView: View {
       if selectedCategories.isEmpty { selectedCategories = Set(allCategories) }
     }
     .onChange(of: filteredCards) { _, newValue in
-            withAnimation(.easeInOut(duration: 0.25)) {
-                deckCardsMirror = Array(newValue.prefix(10))
-            }
+      deckCardsMirror = Array(newValue.prefix(10))
     }
     .toolbar {
       #if os(macOS)
@@ -178,26 +186,19 @@ struct CardsView: View {
       ToolbarItem(placement: .automatic) {
         Menu {
           Section("Topics") {
-            // Categories
+            // Categories - do not dismiss menu when checked so multiple items can be selected
             ForEach(allCategories, id: \.self) { name in
               Button(action: { toggleCategory(name) }) {
                 HStack(spacing: 8) {
-                  ZStack {
-                    Circle()
-                      .stroke(colorForCategory(name), lineWidth: 2)
-                      .frame(width: 16, height: 16)
-                    if selectedCategories.contains(name) {
-                      Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(colorForCategory(name))
-                        .font(.system(size: 14))
-                    }
-                  }
+                  Image(systemName: selectedCategories.contains(name) ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(colorForCategory(name))
                   Text(name)
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(.primary)
                   Spacer()
                 }
               }
+              .menuActionDismissBehavior(.disabled)
             }
           }
           Section {
@@ -215,51 +216,45 @@ struct CardsView: View {
 
   @Environment(\.modelContext) private var context
 
-    private func reshuffleAndReenterDeck() {
-        print("ReshuffleAndReenterDeck")
+  private func reshuffleAndReenterDeck() {
+    print("ReshuffleAndReenterDeck")
 
-        orderedCards = cards.shuffled()
-        currentIndex = 0
-        deckEntrancePhase = 0
+    orderedCards = cards.shuffled()
+    currentIndex = 0
+    deckEntrancePhase = 0
 
-        let source = orderedCards
+    let source = orderedCards
 
-        let base: [DeckCard]
-        if showUnsortedOnly {
-            base = source.filter { $0.decision == nil }
-        } else if let selectedFilter {
-            base = source.filter { $0.decision == selectedFilter }
-        } else {
-            base = source
-        }
-
-        let final: [DeckCard]
-        if !selectedCategories.isEmpty &&
-            selectedCategories.count != allCategories.count {
-
-            final = base.filter { card in
-                let name = card.categoryName?
-                    .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-                return selectedCategories.contains(name)
-            }
-
-        } else {
-            final = base
-        }
-
-        // Clear first so SwiftUI sees a real change
-        deckCardsMirror.removeAll()
-
-        DispatchQueue.main.async {
-
-            self.deckCardsMirror = Array(final.prefix(10))
-
-            withAnimation(.spring(response: 1.6,
-                                  dampingFraction: 0.78)) {
-                self.deckEntrancePhase = 1
-            }
-        }
+    let base: [DeckCard]
+    if showUnsortedOnly {
+      base = source.filter { $0.decision == nil }
+    } else if let selectedFilter {
+      base = source.filter { $0.decision == selectedFilter }
+    } else {
+      base = source
     }
+
+    let final: [DeckCard]
+    if selectedCategories.count != allCategories.count {
+      final = base.filter { card in
+        let name = card.categoryName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return selectedCategories.contains(name)
+      }
+    } else {
+      final = base
+    }
+
+    // Clear first so SwiftUI sees a real change
+    deckCardsMirror.removeAll()
+
+    DispatchQueue.main.async {
+      self.deckCardsMirror = Array(final.prefix(10))
+
+      withAnimation(.spring(response: 1.6, dampingFraction: 0.78)) {
+        self.deckEntrancePhase = 1
+      }
+    }
+  }
 
   private func activeCard(for card: DeckCard) -> some View {
     VStack(spacing: 18) {
@@ -349,89 +344,60 @@ struct CardsView: View {
   }
 
   private var filterBar: some View {
-    GeometryReader { geo in
-      let barFrame = geo.frame(in: .local)
-
-      HStack(spacing: 12) {
-        filterChip(title: "Unsorted", color: .accentColor, count: unsortedCount, isSelected: showUnsortedOnly) {
-          performSelectionHaptic(); applyUnsortedFilter()
-        }
-        .anchorPreference(key: ChipAnchorFramesKey.self, value: .bounds) { anchor in [ChipAnchorFrame(id: .unsorted, rect: anchor)] }
-        
-          filterChip(title: DeckCard.Decision.no.rawValue, color: .red, count: noCount, isSelected: !showUnsortedOnly && selectedFilter == .no) {
-            performSelectionHaptic(); applyFilter(.no)
-          }
-          .anchorPreference(key: ChipAnchorFramesKey.self, value: .bounds) { anchor in [ChipAnchorFrame(id: .no, rect: anchor)] }
-          
-        filterChip(title: DeckCard.Decision.dialogue.rawValue, color: .orange, count: dialogueCount, isSelected: !showUnsortedOnly && selectedFilter == .dialogue) {
-          performSelectionHaptic(); applyFilter(.dialogue)
-        }
-        .anchorPreference(key: ChipAnchorFramesKey.self, value: .bounds) { anchor in [ChipAnchorFrame(id: .dialogue, rect: anchor)] }
-          
-          
-        filterChip(title: DeckCard.Decision.yes.rawValue, color: .green, count: yesCount, isSelected: !showUnsortedOnly && selectedFilter == .yes) {
-          performSelectionHaptic(); applyFilter(.yes)
-        }
-        .anchorPreference(key: ChipAnchorFramesKey.self, value: .bounds) { anchor in [ChipAnchorFrame(id: .yes, rect: anchor)] }
-      }
-      .padding(.horizontal, 14)
-      .padding(.vertical, 10)
-      .frame(width: contentWidth)
-      
-      .onTapGesture { location in
-        updateSelection(at: location, in: geo)
-        performSelectionHaptic()
-      }
-      .overlayPreferenceValue(ChipAnchorFramesKey.self) { anchorFrames in
-        GeometryReader { innerGeo in
-          Color.clear
-            .onAppear {
-              chipFrames = anchorFrames.map { ChipFrame(id: $0.id, rect: innerGeo[$0.rect]) }
-            }
-            .onChange(of: anchorFrames) { _, newValue in
-              chipFrames = newValue.map { ChipFrame(id: $0.id, rect: innerGeo[$0.rect]) }
-            }
+    VStack(spacing: 8) {
+      // Row 1: Unsorted category chip on its own separate row
+      HStack {
+        filterChip(
+          title: "Unsorted",
+          color: .accentColor,
+          count: unsortedCount,
+          isSelected: showUnsortedOnly
+        ) {
+          performSelectionHaptic()
+          applyUnsortedFilter()
         }
       }
-    }
-    .frame(height: 56)
-  }
 
-  private enum ChipID: Hashable { case unsorted, yes, dialogue, no }
-
-  private struct ChipAnchorFrame: Equatable { let id: ChipID; let rect: Anchor<CGRect> }
-  private struct ChipAnchorFramesKey: PreferenceKey {
-    static var defaultValue: [ChipAnchorFrame] = []
-    static func reduce(value: inout [ChipAnchorFrame], nextValue: () -> [ChipAnchorFrame]) {
-      value += nextValue()
-    }
-  }
-
-  private struct ChipFrame: Equatable { let id: ChipID; let rect: CGRect }
-
-  private struct ChipFramesKey: PreferenceKey {
-    static var defaultValue: [ChipFrame] = []
-    static func reduce(value: inout [ChipFrame], nextValue: () -> [ChipFrame]) {
-      value += nextValue()
-    }
-  }
-
-  private func updateSelection(at location: CGPoint, in geo: GeometryProxy) {
-    for chip in chipFrames {
-      if chip.rect.contains(location) {
-        switch chip.id {
-        case .unsorted:
-          if !showUnsortedOnly { applyUnsortedFilter() }
-        case .yes:
-          if selectedFilter != .yes || showUnsortedOnly { applyFilter(.yes) }
-        case .dialogue:
-          if selectedFilter != .dialogue || showUnsortedOnly { applyFilter(.dialogue) }
-        case .no:
-          if selectedFilter != .no || showUnsortedOnly { applyFilter(.no) }
+      // Row 2: Decision filters
+      HStack(spacing: 10) {
+        filterChip(
+          title: DeckCard.Decision.no.rawValue,
+          color: .red,
+          count: noCount,
+          isSelected: !showUnsortedOnly && selectedFilter == .no
+        ) {
+          performSelectionHaptic()
+          applyFilter(.no)
         }
-        return
+
+        filterChip(
+          title: DeckCard.Decision.dialogue.rawValue,
+          color: .orange,
+          count: dialogueCount,
+          isSelected: !showUnsortedOnly && selectedFilter == .dialogue
+        ) {
+          performSelectionHaptic()
+          applyFilter(.dialogue)
+        }
+
+        filterChip(
+          title: DeckCard.Decision.yes.rawValue,
+          color: .green,
+          count: yesCount,
+          isSelected: !showUnsortedOnly && selectedFilter == .yes
+        ) {
+          performSelectionHaptic()
+          applyFilter(.yes)
+        }
       }
     }
+    .padding(.horizontal, 14)
+    .padding(.vertical, 10)
+    .background(
+      RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .fill(.ultraThinMaterial)
+    )
+    .shadow(color: Color.black.opacity(0.12), radius: 12, x: 0, y: 6)
   }
 
   private func filterChip(title: String, color: Color, count: Int, isSelected: Bool, action: @escaping () -> Void) -> some View {
@@ -440,20 +406,14 @@ struct CardsView: View {
         Text(title)
           .font(.caption.weight(.semibold))
           .foregroundStyle(Color.white)
-          .padding(.horizontal, 14)
+          .padding(.horizontal, 16)
           .padding(.vertical, 8)
-          .frame(minWidth: 56)
+          .frame(minWidth: 60)
           .background(
-            {
-              let fillColor: Color = {
-              return isSelected ? color.opacity(0.8) : color.opacity(0.5)
-              }()
-              return RoundedRectangle(cornerRadius: 12)
-                .fill(fillColor)
-            }()
+            RoundedRectangle(cornerRadius: 12)
+              .fill(isSelected ? color.opacity(0.85) : color.opacity(0.40))
           )
           .contentShape(RoundedRectangle(cornerRadius: 12))
-       
 
         if count > 0 {
           ZStack {
@@ -462,10 +422,8 @@ struct CardsView: View {
               .font(.caption2.weight(.bold))
               .foregroundColor(.white)
           }
-          .frame(width: 16, height: 16)
+          .frame(width: 18, height: 18)
           .offset(x: 8, y: -6)
-          .transition(.scale(scale: 0.85).combined(with: .opacity))
-          .animation(.spring(response: 0.25, dampingFraction: 0.8), value: count)
           .accessibilityLabel("\(count) cards")
         }
       }
@@ -499,12 +457,7 @@ struct CardsView: View {
   }
 
   private func count(for decision: DeckCard.Decision?) -> Int {
-    switch decision {
-    case .yes: return yesCount
-    case .dialogue: return dialogueCount
-    case .no: return noCount
-    case nil: return unsortedCount
-    }
+    cardCount(for: decision)
   }
 
   private func decisionButton(title: String, decision: DeckCard.Decision, color: Color) -> some View {
@@ -555,7 +508,7 @@ struct CardsView: View {
         base = baseSource
       }
       let final: [DeckCard]
-      if !selectedCategories.isEmpty && selectedCategories.count != allCategories.count {
+      if selectedCategories.count != allCategories.count {
         final = base.filter { card in
           let name = card.categoryName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
           return selectedCategories.contains(name)
@@ -577,12 +530,10 @@ struct CardsView: View {
       }
       .foregroundStyle(Color.white)
       .frame(width: decisionButtonWidth, height: 84)
-//      .contentShape(RoundedRectangle(cornerRadius: cardCornerRadius))
       .background(
         RoundedRectangle(cornerRadius: cardCornerRadius)
           .fill(isSelected ? color.opacity(0.8) : color.opacity(0.50))
       )
-      
     }
     .buttonStyle(.plain)
     .opacity(isSelected ? 1.0 : 0.9)
@@ -619,7 +570,6 @@ struct CardsView: View {
     } else {
       selectedCategories.insert(name)
     }
-    // If after toggling, none are selected, keep it as empty (show no categories)
     currentIndex = 0
   }
 
@@ -675,10 +625,10 @@ struct CardsView: View {
     return card.texts.values.first ?? ""
   }
 
-  private var unsortedCount: Int {
-    let source = (orderedCards.isEmpty ? cards : orderedCards)
-    let base = source.filter { $0.decision == nil }
-    if !selectedCategories.isEmpty && selectedCategories.count != allCategories.count {
+  private func cardCount(for decision: DeckCard.Decision?) -> Int {
+    let source = orderedCards.isEmpty ? cards : orderedCards
+    let base = source.filter { $0.decision == decision }
+    if selectedCategories.count != allCategories.count {
       return base.filter { card in
         let name = card.categoryName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         return selectedCategories.contains(name)
@@ -686,10 +636,21 @@ struct CardsView: View {
     }
     return base.count
   }
-  private var yesCount: Int { (orderedCards.isEmpty ? cards : orderedCards).filter { $0.decision == .yes }.count }
-  private var dialogueCount: Int { (orderedCards.isEmpty ? cards : orderedCards).filter { $0.decision == .dialogue }.count }
-  private var noCount: Int { (orderedCards.isEmpty ? cards : orderedCards).filter { $0.decision == .no }.count }
-  private var allCount: Int { (orderedCards.isEmpty ? cards : orderedCards).count }
+
+  private var unsortedCount: Int { cardCount(for: nil) }
+  private var yesCount: Int { cardCount(for: .yes) }
+  private var dialogueCount: Int { cardCount(for: .dialogue) }
+  private var noCount: Int { cardCount(for: .no) }
+  private var allCount: Int {
+    let source = orderedCards.isEmpty ? cards : orderedCards
+    if selectedCategories.count != allCategories.count {
+      return source.filter { card in
+        let name = card.categoryName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return selectedCategories.contains(name)
+      }.count
+    }
+    return source.count
+  }
 
   private var allCardsCategorized: Bool {
     (orderedCards.isEmpty ? cards : orderedCards).allSatisfy { $0.decision != nil }
@@ -721,8 +682,6 @@ extension CardsView.FilterTag {
     }
   }
 }
-
-
 
 private struct CardLayer<Content: View>: View {
   let index: Int
@@ -784,32 +743,28 @@ private struct GenericCardDeck<Data: Identifiable, Content: View>: View {
     }
   }
 
-    private var dragGesture: some Gesture {
-        DragGesture()
-            .updating($drag) { value, state, _ in
-                state = value.translation
+  private var dragGesture: some Gesture {
+    DragGesture()
+      .updating($drag) { value, state, _ in
+        state = value.translation
+      }
+      .onEnded { value in
+        let threshold: CGFloat = 140
+        guard abs(value.translation.width) > threshold else { return }
+
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.85)) {
+          guard !cards.isEmpty else { return }
+
+          cards.removeFirst()
+
+          if cards.isEmpty {
+            DispatchQueue.main.async {
+              onDeckEmpty?()
             }
-            .onEnded { value in
-                let threshold: CGFloat = 140
-                guard abs(value.translation.width) > threshold else { return }
-
-                withAnimation(.spring(response: 0.42,
-                                      dampingFraction: 0.85)) {
-
-                    guard !cards.isEmpty else { return }
-
-                    cards.removeFirst()
-
-                    // If that was the last visible card,
-                    // notify the parent so it can rebuild the deck.
-                    if cards.isEmpty {
-                        DispatchQueue.main.async {
-                            onDeckEmpty?()
-                        }
-                    }
-                }
-            }
-    }
+          }
+        }
+      }
+  }
 }
 
 #Preview {
